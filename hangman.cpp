@@ -1,8 +1,8 @@
-#include <string.h>
-#include <ncurses.h>
+#include <ncurses.h> // for ncurses functions
+#include <string.h> // for strlen()
 
-#include <time.h>
-#include <stdlib.h>
+#include <time.h> // for time()
+#include <stdlib.h> // for rand()
 
 #include "hangman.h"
 

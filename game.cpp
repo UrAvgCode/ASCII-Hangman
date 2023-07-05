@@ -1,4 +1,5 @@
-#include "gfx.h"
+#include <ncurses.h> // for ncurses functions
+#include <unistd.h> // for sleep()
 
 #include "game.h"
 #include "hangman.h"
@@ -126,7 +127,12 @@ void game_loop()
     float dt = 1/fps; // frame duration
     float ms = dt*1000; // milli seconds
 
-    init_gfx();
+    // initialize ncurses screen
+    initscr(); // initialize the screen to contain a single window
+    curs_set(FALSE); // disable text cursor
+    timeout(0); // configure getch() to be non-blocking
+    keypad(stdscr, TRUE); // configure getch() to return cursor key codes
+    noecho(); // do not echo keyboard input
 
     // the main game loop
     while (true)
@@ -137,7 +143,6 @@ void game_loop()
 
         // render a single frame
         render_frame();
-        refresh();
 
         // update frame counter and elapsed time
         frame++;
@@ -147,7 +152,8 @@ void game_loop()
         bool finish = update_state();
 
         // sleep for the remainder of the frame
-        msleep(ms);
+        int us = ms*1000; // micro secs
+        usleep(us);
 
         // check for game finish
         if (finish) break;
