@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
 # project name
-PROJECT(ASCII_GFX_library)
+PROJECT(ASCII_HANGMAN)
 
 # specify sources and headers
 SET(HDRS
