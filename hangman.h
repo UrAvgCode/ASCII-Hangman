@@ -11,6 +11,7 @@ void updateHintWord(char chr);
 
 void drawHintWord(int x, int y);
 void drawHintLetters(int x, int y);
+void drawGuessWord(int x, int y);
 
 bool isLetter(char chr);
 

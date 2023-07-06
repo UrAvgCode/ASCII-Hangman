@@ -7,7 +7,7 @@
 #include "menu.h"
 
 // game constant: frames per second
-static float fps = 10;
+static float fps = 60;
 
 // game state: actual frame number
 static int frame = 0;
@@ -63,13 +63,14 @@ void render_frame()
         drawCactus(tx - 35, ty + 4, 0);
         drawCactus(tx + 27, ty + 9, 1);
         drawFloor(ty + 17, max_x);
-        drawHintWord(10, 5);
         drawHintLetters(10, 7);
 
         if(state == GAME_LOOP) {
-            drawBird(frame % max_x, 12);
+            drawHintWord(10, 5);
+            drawBird((frame / 4) % max_x, 12);
             updateHintWord(key);
         } else {
+            drawGuessWord(10, 5);
             drawGameOver(tx - 20, 10, getHasWon());
         }
     }
@@ -152,8 +153,7 @@ void game_loop()
         bool finish = update_state();
 
         // sleep for the remainder of the frame
-        int us = ms*1000; // micro secs
-        usleep(us);
+        usleep(ms*1000);
 
         // check for game finish
         if (finish) break;

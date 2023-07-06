@@ -3,63 +3,60 @@
 
 #include <time.h> // for time()
 #include <stdlib.h> // for rand()
+#include <stdio.h>
 
 #include "hangman.h"
+#include "game.h"
 
+#define LENGTH 20
 
 int mistakes = 0;
 bool hasWon = false;
 
-char guessWord[] = "helloworld";
-char hintWord[] = "          ";
+char guessWord[LENGTH];
+char hintWord[LENGTH];
 
-char usedLetters[100];
+char usedLetters[6];
 int usedLettersCounter = 0;
 
 void pickGuessWord(bool lang) {
+    srand(time(NULL));
 
-    if(lang) {
-        char wordListEN[10][11] = { "heart", "racecar", "elephant", "house", "horse", "table", "bread", "crocodile", "flower", "cat" };
+    FILE* fp = NULL;
+    char words[LENGTH];
+    int i = 0 , ran = 0;
+    srand(time(NULL));
 
-        srand(time(NULL));
-        int choose = rand() % strlen(wordListEN[0]);
-
-        for(int i = 0; i < 11; i++){
-            guessWord[i] = wordListEN[choose][i];
-        }
-
+    if(getLang()) {
+        fp = fopen("wordlist-en.txt" , "r+");
     } else {
-        char wordListDE[10][11] = { "herz", "rennauto", "elefant", "haus", "pferd", "tisch", "brot", "krokodil", "blume", "katze" };
-
-        srand(time(NULL));
-        int choose = rand() % strlen(wordListDE[0]);
-
-        int length = 11;
-
-        for(int i = 0; i < length; i++){
-            guessWord[i] = wordListDE[choose][i];
-        }
+        fp = fopen("wordlist-de.txt" , "r+");
     }
+
+    for(; fgets(words , sizeof(words) , fp) ; i++);
+    ran = rand() % i;
+    rewind(fp);
+    for(i = 0 ; i < ran ; i++)
+        fgets(words , sizeof(words) , fp);
+
+    for(int i = 0; i < LENGTH; i++)
+        if(isLetter(words[i]))
+            guessWord[i] = words[i];
 }
 
 void createHintWord() {
-    int length = strlen(hintWord);
-
-    for(int i = 0; i < length; i++){
-        if(isLetter(guessWord[i])) {
+    for(int i = 0; i < LENGTH; i++)
+        if(isLetter(guessWord[i]))
             hintWord[i] = '-';
-        }
-    }
 }
 
 void updateHintWord(char chr) {
     if(!isLetter(chr))
         return;
 
-    int length = strlen(usedLetters);
     bool contains = false;
 
-    for(int i = 0; i < length; i++){
+    for(int i = 0; i < usedLettersCounter + 1; i++){
         if(usedLetters[i] == chr){
             contains = true;
         }
@@ -68,9 +65,7 @@ void updateHintWord(char chr) {
     if(contains)
         return;
 
-    length = strlen(guessWord);
-
-    for(int i = 0; i < length; i++){
+    for(int i = 0; i < LENGTH; i++){
         if(guessWord[i] == chr){
             hintWord[i] = guessWord[i];
             contains = true;
@@ -81,12 +76,6 @@ void updateHintWord(char chr) {
         mistakes += 1;
         usedLetters[usedLettersCounter] = chr;
         usedLettersCounter++;
-
-        if(mistakes >= 6) {
-            for(int i = 0; i < length; i++){
-                hintWord[i] = guessWord[i];
-            }
-        }
     }
 }
 
@@ -98,26 +87,21 @@ void drawHintLetters(int x, int y) {
     mvprintw(y, x, "Wrong Letters:");
 
     for(int i = 0; i < usedLettersCounter; i++){
-        mvprintw(y + 1, x + 2*i, "%c,", usedLetters[i]);
+        mvprintw(y + 1, x + 2*i, "%c", usedLetters[i]);
+        if(i != usedLettersCounter - 1)
+            mvprintw(y + 1, x + 1 + 2*i, ",");
     }
 }
 
+void drawGuessWord(int x, int y) {
+    mvprintw(y, x, "GuessWord: %s", guessWord);
+}
+
 bool isGameOver() {
-    if(mistakes >= 6) {
+    if(mistakes >= 6)
         return true;
-    }
 
-    int length = strlen(guessWord);
-
-    bool equals = true;
-    for(int i = 0; i < length; i++){
-        if(hintWord[i] != guessWord[i]) {
-            equals = false;
-            break;
-        }
-    }
-
-    if(equals) {
+    if(strcmp(guessWord, hintWord) == 0) {
         hasWon = true;
         return true;
     }
@@ -125,40 +109,31 @@ bool isGameOver() {
     return false;
 }
 
-int getMistakes() {
-    return mistakes;
-}
-
 void reset() {
     mistakes = 0;
     usedLettersCounter = 0;
+    hasWon = false;
 
-    for(int i=0; i<11; i++) {
-        guessWord[i]=' ';
+    for(int i=0; i<LENGTH; i++) {
+        guessWord[i]='\0';
+        hintWord[i]='\0';
     }
 
-    for(int i=0; i<11; i++) {
-        hintWord[i]=' ';
-    }
-
-    for(int i=0; i<100; i++) {
+    for(int i=0; i < 6; i++) {
         usedLetters[i]='\0';
     }
 }
 
-bool getHasWon() {
-    return hasWon;
+bool isLetter(char chr) {
+    if(chr >= 'a' && chr <= 'z')
+        return true;
+    return false;
 }
 
-bool isLetter(char chr) {
-    char abc[] = "abcdefghijklmnopqrstuvwxyz";
+int getMistakes() {
+    return mistakes;
+}
 
-    int length = strlen(abc);
-    for(int i = 0; i < length; i++){
-        if(abc[i] == chr){
-            return true;
-        }
-    }
-
-    return false;
+bool getHasWon() {
+    return hasWon;
 }

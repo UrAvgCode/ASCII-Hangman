@@ -1,0 +1,10 @@
+heart
+racecar
+elephant
+house
+horse
+table
+bread
+crocodile
+flower
+cat

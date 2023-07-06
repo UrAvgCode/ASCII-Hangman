@@ -1,0 +1,10 @@
+herz
+rennauto
+elefant
+haus
+pferd
+tisch
+brot
+krokodil
+blume
+katze

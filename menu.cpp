@@ -53,32 +53,18 @@ void drawMenu(int x, int y) {
         mvprintw(y+13, x + 30, " |_____/|______|");
     }
 
-    switch(state) {
-    case START_GAME:
-        mvprintw(y+0, x - 6, " __");
-        mvprintw(y+1, x - 6, " \\ \\");
-        mvprintw(y+2, x - 6, "  \\ \\");
-        mvprintw(y+3, x - 6, "   > >");
-        mvprintw(y+4, x - 6, "  / /");
-        mvprintw(y+5, x - 6, " /_/");
-        break;
-    case CHANGE_LANGUAGE:
-        mvprintw(y+8, x - 6, " __");
-        mvprintw(y+9, x - 6, " \\ \\");
-        mvprintw(y+10, x - 6, "  \\ \\");
-        mvprintw(y+11, x - 6, "   > >");
-        mvprintw(y+12, x - 6, "  / /");
-        mvprintw(y+13, x - 6, " /_/");
-        break;
-    case QUIT_GAME:
-        mvprintw(y+18, x - 6, " __");
-        mvprintw(y+19, x - 6, " \\ \\");
-        mvprintw(y+20, x - 6, "  \\ \\");
-        mvprintw(y+21, x - 6, "   > >");
-        mvprintw(y+22, x - 6, "  / /");
-        mvprintw(y+23, x - 6, " /_/");
-        break;
-    }
+    int y_offset = 0;
+    if(state == CHANGE_LANGUAGE)
+        y_offset = 8;
+    if(state == QUIT_GAME)
+        y_offset = 18;
+
+    mvprintw(y+y_offset, x - 5, "__");
+    mvprintw(y+y_offset+1, x - 5, "\\ \\");
+    mvprintw(y+y_offset+2, x - 5, " \\ \\");
+    mvprintw(y+y_offset+3, x - 5, "  > >");
+    mvprintw(y+y_offset+4, x - 5, " / /");
+    mvprintw(y+y_offset+5, x - 5, "/_/");
 }
 
 int updateMenuState(char key) {

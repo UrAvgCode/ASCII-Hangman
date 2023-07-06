@@ -16,7 +16,6 @@ void intro(int x, int y) {
 }
 
 void drawHangman(int x, int y, int state) {
-
     mvprintw(y, x, " ______________");
     mvprintw(y+1, x, "|  ________))__|");
     mvprintw(y+2, x, " ||/ /     ||");
