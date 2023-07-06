@@ -115,9 +115,8 @@ void reset() {
         hintWord[i]='\0';
     }
 
-    for(int i=0; i < 6; i++) {
+    for(int i=0; i < 6; i++)
         usedLetters[i]='\0';
-    }
 }
 
 bool isLetter(char chr) {
