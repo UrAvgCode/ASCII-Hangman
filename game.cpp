@@ -7,7 +7,7 @@
 #include "menu.h"
 
 // game constant: frames per second
-static float fps = 60;
+static float fps = 30;
 
 // game state: actual frame number
 static int frame = 0;
@@ -62,12 +62,12 @@ void render_frame()
         drawHangman(tx - 9, ty, getMistakes());
         drawCactus(tx - 35, ty + 4, 0);
         drawCactus(tx + 27, ty + 9, 1);
-        drawFloor(ty + 17, max_x);
+        drawFloor(0, ty + 17, max_x);
         drawHintLetters(10, 7);
 
         if(state == GAME_LOOP) {
             drawHintWord(10, 5);
-            drawBird((frame / 4) % max_x, 12);
+            drawBird((frame / 2) % max_x, 12);
             updateHintWord(key);
         } else {
             drawGuessWord(10, 5);
@@ -90,31 +90,30 @@ bool update_state()
         break;
     case GAME_MENU:
         switch(updateMenuState(key)) {
-        case 1:
+        case 0:
             reset();
             pickGuessWord(lang);
             createHintWord();
             state = GAME_LOOP;
             break;
-        case 2:
+        case 1:
             lang = !lang;
             break;
-        case 3:
+        case 2:
             return(true);
             break;
         }
         break;
     case GAME_LOOP:
-        if (key == 27)
-            state = GAME_MENU;
         if (isGameOver())
             state = GAME_OVER;
         break;
     case GAME_OVER:
-        if(key == 27)
-            state = GAME_MENU;
         break;
     }
+
+    if (key == 27)
+        state = GAME_MENU;
 
     return(false);
 }

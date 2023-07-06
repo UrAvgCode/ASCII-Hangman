@@ -1,10 +1,10 @@
 #include <ncurses.h> // for ncurses functions
 
 #include "sprites.h"
-#include "hangman.h"
 
 void intro(int x, int y) {
     drawHangman(x + 14, y, 6);
+    drawFloor(x + 10, y + 17, 26);
     mvprintw(y+19, x, " _");
     mvprintw(y+20, x, "| |");
     mvprintw(y+21, x, "| |__   __ _ _ __   __ _ _ __ ___   __ _ _ __");
@@ -70,7 +70,7 @@ void drawHangman(int x, int y, int state) {
         mvprintw(y+15, x+11, "/|");
     }
     if(state >= 6) {
-        mvprintw(y+11, x+14, " | ()");
+        mvprintw(y+11, x+14, " |");
         mvprintw(y+12, x+14, "\\|");
         mvprintw(y+13, x+14, "||");
         mvprintw(y+14, x+14, "||");
@@ -117,12 +117,6 @@ void drawCactus(int x, int y, int version) {
     }
 }
 
-void drawFloor(int y, int width) {
-    for(int i = 0; i < width; i++) {
-        mvprintw(y, i, "-");
-    }
-}
-
 void drawGameOver(int x, int y, bool won) {
     if(won){
         mvprintw(y, x, "__     ______  _    _  __          ______  _   _");
@@ -139,4 +133,9 @@ void drawGameOver(int x, int y, bool won) {
         mvprintw(y+4, x, "   | | | |__| | |__| | | |___| |__| |____) |  | |");
         mvprintw(y+5, x, "   |_|  \\____/ \\____/  |______\\____/|_____/   |_|");
     }
+}
+
+void drawFloor(int x, int y, int width) {
+    for(int i = 0; i < width; i++)
+        mvprintw(y, x+i, "-");
 }

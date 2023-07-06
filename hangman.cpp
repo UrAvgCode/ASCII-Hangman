@@ -54,19 +54,15 @@ void updateHintWord(char chr) {
     if(!isLetter(chr))
         return;
 
-    bool contains = false;
-
-    for(int i = 0; i < usedLettersCounter + 1; i++){
-        if(usedLetters[i] == chr){
-            contains = true;
+    for(int i = 0; i <= usedLettersCounter; i++){
+        if(equalsLetter(usedLetters[i], chr)){
+            return;
         }
     }
 
-    if(contains)
-        return;
-
+    bool contains = false;
     for(int i = 0; i < LENGTH; i++){
-        if(guessWord[i] == chr){
+        if(equalsLetter(guessWord[i], chr)){
             hintWord[i] = guessWord[i];
             contains = true;
         }
@@ -74,7 +70,7 @@ void updateHintWord(char chr) {
 
     if(!contains) {
         mistakes += 1;
-        usedLetters[usedLettersCounter] = chr;
+        usedLetters[usedLettersCounter] = toUppercase(chr);
         usedLettersCounter++;
     }
 }
@@ -125,9 +121,21 @@ void reset() {
 }
 
 bool isLetter(char chr) {
-    if(chr >= 'a' && chr <= 'z')
+    if((chr >= 'a' && chr <= 'z') || (chr >= 'A' && chr <= 'Z'))
         return true;
     return false;
+}
+
+bool equalsLetter(char l1, char l2) {
+    if(l1 == l2 || l1 - 32 == l2 || l1 + 32 == l2)
+        return true;
+    return false;
+}
+
+char toUppercase(char c) {
+    if(c > 90)
+        return c - 32;
+    return c;
 }
 
 int getMistakes() {

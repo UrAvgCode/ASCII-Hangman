@@ -6,11 +6,11 @@
 // definition of menu phases
 typedef enum {
     START_GAME,
-    QUIT_GAME,
-    CHANGE_LANGUAGE
+    CHANGE_LANGUAGE,
+    QUIT_GAME
 } MENU_STATES;
 
-// game state: actual game phase
+// menu state: actual menu state
 static MENU_STATES state = START_GAME;
 
 void drawMenu(int x, int y) {
@@ -53,11 +53,9 @@ void drawMenu(int x, int y) {
         mvprintw(y+13, x + 30, " |_____/|______|");
     }
 
-    int y_offset = 0;
+    int y_offset = state * 9;
     if(state == CHANGE_LANGUAGE)
-        y_offset = 8;
-    if(state == QUIT_GAME)
-        y_offset = 18;
+        y_offset--;
 
     mvprintw(y+y_offset, x - 5, "__");
     mvprintw(y+y_offset+1, x - 5, "\\ \\");
@@ -69,34 +67,13 @@ void drawMenu(int x, int y) {
 
 int updateMenuState(char key) {
 
-    switch(state) {
-    case START_GAME:
-        if (key == 3) {
-            state = QUIT_GAME;
-        } else if (key == 2) {
-            state = CHANGE_LANGUAGE;
-        } else if (key == 10) {
-            return 1;
-        }
-        break;
-    case CHANGE_LANGUAGE:
-        if (key == 3) {
-            state = START_GAME;
-        } else if (key == 2) {
-            state = QUIT_GAME;
-        } else if (key == 10) {
-            return 2;
-        }
-        break;
-    case QUIT_GAME:
-        if (key == 3) {
-            state = CHANGE_LANGUAGE;
-        } else if (key == 2) {
-            state = START_GAME;
-        }  else if (key == 10) {
-            return 3;
-        }
-        break;
+    if (key == 3) {
+        state = (MENU_STATES) ((state+2)%3);
+    } else if (key == 2) {
+        state = (MENU_STATES) ((state +1)%3);
+    } else if (key == 10) {
+        return state;
     }
-    return 0;
+
+    return -1;
 }

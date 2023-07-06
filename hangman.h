@@ -14,5 +14,7 @@ void drawHintLetters(int x, int y);
 void drawGuessWord(int x, int y);
 
 bool isLetter(char chr);
+bool equalsLetter(char l1, char l2);
+char toUppercase(char c);
 
 void reset();
