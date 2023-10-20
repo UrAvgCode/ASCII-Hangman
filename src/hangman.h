@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 void intro(int x, int y);
 
 int getMistakes();

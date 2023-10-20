@@ -1,66 +1,32 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
+project(hangman)
 
-# project name
-PROJECT(ASCII_Hangman)
+# Use our modified FindSDL2* modules
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${app_SOURCE_DIR}/cmake")
+set(BIN_DIR ${app_SOURCE_DIR}/bin)
 
-# specify sources and headers
-SET(HDRS
-   # module headers go here (*.h)
-   game.h
-   hangman.h
-   menu.h
-   sprites.h
-   )
-SET(SRCS
-   # module implementations go here (*.cpp)
-   main.cpp
-   game.cpp
-   hangman.cpp
-   menu.cpp
-   sprites.cpp
-   )
+# Bump up warning levels appropriately for clang, gcc & msvc and build in debug mode
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -std=c11")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
+elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+	if (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+		string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	else()
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+	endif()
+endif()
 
-# specify source directories
-INCLUDE_DIRECTORIES(.)
+find_package(Curses REQUIRED)
+include_directories(${CURSES_INCLUDE_DIR})
 
-# C++ standard
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98 -Wall -Werror")
-IF (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.2)
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wvla")
-ENDIF (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.2)
+include_directories("./src")
+file (GLOB app_SOURCES src/*.c)
 
-# default C++ compiler definitions
-IF (NOT CMAKE_BUILD_TYPE)
-   IF (UNIX)
-      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O")
-   ENDIF (UNIX)
-ENDIF (NOT CMAKE_BUILD_TYPE)
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/wordlist-en ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/wordlist-de ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
-# extend cmake module path
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
-
-# find NCurses
-FIND_PACKAGE(Curses REQUIRED)
-INCLUDE_DIRECTORIES(${CURSES_INCLUDE_DIRS})
-
-# build and link executable
-ADD_EXECUTABLE(main ${HDRS} ${SRCS}) # compile main executable
-TARGET_LINK_LIBRARIES(main
-   ${GFXLIB_NAME} # link with ascii gfx lib
-   )
-TARGET_LINK_LIBRARIES(main
-   ${CURSES_LIBRARIES} # link with NCurses
-   )
-IF (SDL_FOUND AND SDL_MIXER_FOUND)
-   TARGET_LINK_LIBRARIES(main
-      ${SDL_LIBRARY} # link with SDL
-      ${SDL_MIXER_LIBRARY} # link with SDL mixer
-      )
-ENDIF (SDL_FOUND AND SDL_MIXER_FOUND)
-IF ((SDL2_FOUND AND SDL2_MIXER_FOUND) AND NOT (SDL_FOUND OR SDL_MIXER_FOUND))
-   TARGET_LINK_LIBRARIES(main
-      ${SDL2_LIBRARY} # link with SDL2
-      ${SDL2_MIXER_LIBRARY} # link with SDL2 mixer
-      )
-ENDIF ((SDL2_FOUND AND SDL2_MIXER_FOUND) AND NOT (SDL_FOUND OR SDL_MIXER_FOUND))
+add_executable(hangman ${app_SOURCES})
+target_link_libraries(hangman ${CURSES_LIBRARY})
+install(TARGETS hangman RUNTIME DESTINATION ${})

@@ -31,8 +31,5 @@
 *.out
 *.app
 
-# MakeFiles
-Makefile
-CMakeFiles
-CMakeCache.txt
-cmake_install.cmake
+build
+.vscode

@@ -1,4 +1,4 @@
-#include <ncurses.h> // for ncurses functions
+#include <ncurses.h>
 
 #include "sprites.h"
 

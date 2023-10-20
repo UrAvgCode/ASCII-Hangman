@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 void render_frame();
 bool update_state();
 void game_loop();

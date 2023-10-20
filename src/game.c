@@ -1,5 +1,5 @@
-#include <ncurses.h> // for ncurses functions
-#include <unistd.h> // for sleep()
+#include <ncurses.h>
+#include <unistd.h>
 
 #include "game.h"
 #include "hangman.h"

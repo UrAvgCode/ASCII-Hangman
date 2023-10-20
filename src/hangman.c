@@ -1,12 +1,15 @@
-#include <ncurses.h> // for ncurses functions
-#include <string.h> // for strlen()
+#include <ncurses.h>
+#include <string.h>
 
-#include <time.h> // for time()
-#include <stdlib.h> // for rand()
+#include <time.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "hangman.h"
 #include "game.h"
+
+#define MAX_WORD   100
+#define NUM_WORDS  1
 
 #define LENGTH 20
 
@@ -20,28 +23,39 @@ char usedLetters[6];
 int usedLettersCounter = 0;
 
 void pickGuessWord(bool lang) {
-    srand(time(NULL));
+    /* Open words file */
+    FILE *fp = fopen("wordlist-en", "r");
 
-    FILE* fp = NULL;
-    char words[LENGTH];
-    int i = 0 , ran = 0;
-    srand(time(NULL));
-
-    if(getLang()) {
-        fp = fopen("wordlist-en.txt" , "r+");
-    } else {
-        fp = fopen("wordlist-de.txt" , "r+");
+    if (fp == NULL) {
+        perror("Unable to locate word list");
+        exit(EXIT_FAILURE);
     }
 
-    for(; fgets(words , sizeof(words) , fp) ; i++);
-    ran = rand() % i;
-    rewind(fp);
-    for(i = 0 ; i < ran ; i++)
-        fgets(words , sizeof(words) , fp);
+    /* Count words in file */
+    char word[MAX_WORD];
+    long wc = 0;
+    while (fgets(word, sizeof word, fp) != NULL) {
+        ++wc;
+    }
 
-    for(int i = 0; i < LENGTH; i++)
-        if(isLetter(words[i]))
-            guessWord[i] = words[i];
+    /* Choose random word */
+    char randwords[MAX_WORD];
+    srand((unsigned) time(NULL));
+
+    rewind(fp);
+    int sel = rand() % wc + 1;
+    for (int j = 0; j < sel; j++) {
+        if (fgets(word, sizeof word, fp) == NULL) {
+            perror("Error in fgets()");
+        }
+    }
+    strcpy(randwords, word);
+
+    if (fclose(fp) != 0) {
+        perror("Unable to close file");
+    }
+
+    strcpy(guessWord, randwords);
 }
 
 void createHintWord() {
