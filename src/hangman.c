@@ -8,9 +8,6 @@
 #include "hangman.h"
 #include "game.h"
 
-#define MAX_WORD   100
-#define NUM_WORDS  1
-
 #define LENGTH 20
 
 int mistakes = 0;
@@ -24,7 +21,11 @@ int usedLettersCounter = 0;
 
 void pickGuessWord(bool lang) {
     /* Open words file */
-    FILE *fp = fopen("wordlist-en", "r");
+    FILE *fp;
+    if(lang)
+        fp = fopen("wordlist-en", "r");
+    else
+        fp = fopen("wordlist-de", "r");
 
     if (fp == NULL) {
         perror("Unable to locate word list");
@@ -32,14 +33,14 @@ void pickGuessWord(bool lang) {
     }
 
     /* Count words in file */
-    char word[MAX_WORD];
+    char word[LENGTH];
     long wc = 0;
     while (fgets(word, sizeof word, fp) != NULL) {
         ++wc;
     }
 
     /* Choose random word */
-    char randwords[MAX_WORD];
+    char randwords[LENGTH];
     srand((unsigned) time(NULL));
 
     rewind(fp);
