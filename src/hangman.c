@@ -56,6 +56,10 @@ void pickGuessWord(bool lang) {
         perror("Unable to close file");
     }
 
+    for(int i = 0; i < LENGTH; i++)
+        if(randwords[i] == '\n')
+            randwords[i] = '\0';
+
     strcpy(guessWord, randwords);
 }
 
