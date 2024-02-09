@@ -32,19 +32,17 @@ typedef enum {
 // game state: actual game phase
 static GAME_STATES state = GAME_INTRO;
 
-GAME_STATES get_state()
-{
-    return(state);          
+GAME_STATES get_state() {
+    return (state);
 }
 
 // render a single frame
-void render_frame()
-{
+void render_frame() {
     int max_x;
     int max_y;
     getmaxyx(stdscr, max_y, max_x);
-    int tx = max_x/2;
-    int ty = max_y/2;
+    int tx = max_x / 2;
+    int ty = max_y / 2;
 
     // clear the actual frame
     clear();
@@ -65,7 +63,7 @@ void render_frame()
         drawFloor(0, ty + 17, max_x);
         drawHintLetters(10, 7);
 
-        if(state == GAME_LOOP) {
+        if (state == GAME_LOOP) {
             drawHintWord(10, 5);
             drawBird((frame / 2) % max_x, 12);
             updateHintWord(key);
@@ -80,52 +78,50 @@ void render_frame()
 
 // update the game state
 // * esc goes back to menu
-bool update_state()
-{
+bool update_state() {
     // state check cascade
-    switch(state) {
-    case GAME_INTRO:
-        if (elapsed > 3)
-            state = GAME_MENU;
-        break;
-    case GAME_MENU:
-        switch(updateMenuState(key)) {
-        case 0:
-            reset();
-            pickGuessWord(lang);
-            createHintWord();
-            state = GAME_LOOP;
+    switch (state) {
+        case GAME_INTRO:
+            if (elapsed > 3)
+                state = GAME_MENU;
             break;
-        case 1:
-            lang = !lang;
+        case GAME_MENU:
+            switch (updateMenuState(key)) {
+                case 0:
+                    reset();
+                    pickGuessWord(lang);
+                    createHintWord();
+                    state = GAME_LOOP;
+                    break;
+                case 1:
+                    lang = !lang;
+                    break;
+                case 2:
+                    return (true);
+                    break;
+            }
             break;
-        case 2:
-            return(true);
+        case GAME_LOOP:
+            if (isGameOver())
+                state = GAME_OVER;
             break;
-        }
-        break;
-    case GAME_LOOP:
-        if (isGameOver())
-            state = GAME_OVER;
-        break;
-    case GAME_OVER:
-        break;
+        case GAME_OVER:
+            break;
     }
 
     if (key == 27)
         state = GAME_MENU;
 
-    return(false);
+    return (false);
 }
 
 // the game loop
 // * it renders frame after frame
 // * updates the state after each frame
 // * and sleeps for the remainder of the frame
-void game_loop()
-{
-    float dt = 1/fps; // frame duration
-    float ms = dt*1000; // milli seconds
+void game_loop() {
+    float dt = 1 / fps; // frame duration
+    float ms = dt * 1000; // milli seconds
 
     // initialize ncurses screen
     initscr(); // initialize the screen to contain a single window
@@ -135,8 +131,7 @@ void game_loop()
     noecho(); // do not echo keyboard input
 
     // the main game loop
-    while (true)
-    {
+    while (true) {
 
         // keyboard input
         key = getch();
@@ -152,7 +147,7 @@ void game_loop()
         bool finish = update_state();
 
         // sleep for the remainder of the frame
-        usleep(ms*1000);
+        usleep(ms * 1000);
 
         // check for game finish
         if (finish) break;
@@ -160,7 +155,6 @@ void game_loop()
 }
 
 // get language
-bool getLang()
-{
-    return(lang);
+bool getLang() {
+    return (lang);
 }

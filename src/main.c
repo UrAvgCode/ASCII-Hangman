@@ -2,5 +2,5 @@
 
 int main() {
     game_loop();
-    return(0);
+    return (0);
 }
